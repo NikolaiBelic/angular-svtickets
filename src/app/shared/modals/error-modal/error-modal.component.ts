@@ -3,7 +3,6 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'error-modal',
-  imports: [],
   templateUrl: './error-modal.component.html',
   styleUrl: './error-modal.component.css'
 })
