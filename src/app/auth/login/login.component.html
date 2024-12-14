@@ -1,0 +1,37 @@
+<form [formGroup]="loginForm" (ngSubmit)="loginUser()" class="mt-4">
+	<legend>Welcome to SVTickets!</legend>
+
+	<div class="mb-3">
+		<label for="email">Email:</label>
+		<input 
+			type="email" 
+			class="form-control" 
+			formControlName="email" 
+			placeholder="Email"
+			[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" 
+		/>
+		@let emailErrors = loginForm.get('email')?.errors;
+		@if(emailErrors?.['required']) {
+		<div class="invalid-feedback">Email is required.</div>
+		} @if (emailErrors?.['email']) {
+		<div class="invalid-feedback">Email is not valid.</div>
+		}
+	</div>
+	<div class="mb-3">
+		<label for="password">Password:</label>
+		<input 
+			type="password" 
+			class="form-control" 
+			formControlName="password" 
+			placeholder="Password"
+			[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" 
+		/>
+		@let passwordErrors = loginForm.get('password')?.errors;
+		@if(passwordErrors?.['required']) {
+		<div class="invalid-feedback">Password is required.</div>
+		}
+	</div>
+	<p class="text-danger" id="errorInfo"></p>
+	<a class="btn btn-secondary" [routerLink]="['/auth/register']" role="button">Create account</a>
+	<button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button>
+</form>

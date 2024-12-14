@@ -1,0 +1,104 @@
+<div class="container">
+	<form [formGroup]="registerForm" (ngSubmit)="registerUser()" class="mt-4">
+		<legend>Create an account</legend>
+
+		<div class="mb-3">
+			<label for="name">Name:</label>
+			<input 
+				type="text" 
+				class="form-control" 
+				formControlName="name" 
+				placeholder="Name"
+			  [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" 
+			/>
+      <div class="invalid-feedback">Name is required.</div>
+		</div>
+
+		<!-- EMAILS -->
+		<div class="mb-3">
+			<label for="email">Email:</label>
+			<input 
+				type="email" 
+				class="form-control" 
+				formControlName="email" 
+				placeholder="Email" 
+				[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+			/>
+      @let emailErrors = registerForm.get('email')?.errors;
+      @if(emailErrors?.['required']) {
+        <div class="invalid-feedback">Email is required.</div>
+      } @if (emailErrors?.['email']) {
+        <div class="invalid-feedback">Email is not valid.</div>
+      }
+		</div>
+		<div class="mb-3">
+			<label for="email2">Repeat Email:</label>
+      @let email2 = registerForm.get('email2')!;
+			<input 
+        type="email" 
+        class="form-control" 
+        formControlName="email2" 
+        placeholder="Email" 
+        [class]="{
+          'is-valid': email2.touched && !registerForm.errors?.['equalValues'],
+          'is-invalid': email2.touched && registerForm.errors?.['equalValues'],
+        }"
+      />
+      <div class="invalid-feedback">Emails do not match!</div>
+		</div>
+		<!-- FIN EMAILS -->
+
+		<div class="mb-3">
+			<label for="password">Password:</label>
+			<input 
+				type="password" 
+				class="form-control" 
+				formControlName="password" 
+				placeholder="Password" 
+				[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }"
+			/>
+
+			@let passwordErrors = registerForm.get('password')?.errors;
+			@if(passwordErrors?.['required']) {
+			<div class="invalid-feedback">Password is required.</div>
+			} @if(passwordErrors?.['minlength']) {
+			<div class="invalid-feedback">
+				Te faltan al menos
+				{{passwordErrors?.['minlength'].requiredLength - passwordErrors?.['minlength'].actualLength}}
+				caracteres más
+			</div>
+			}
+
+		</div>
+		<div class="form-row">
+			<div class="mb-3 col">
+				<label for="lat">Latitude:</label>
+				<input type="text" class="form-control" id="lat" formControlName="lat" placeholder="Geolocating..." readonly />
+			</div>
+			<div class="mb-3 col">
+				<label for="lng">Longitude:</label>
+				<input type="text" class="form-control" id="lng" formControlName="lng" placeholder="Geolocating..." readonly />
+			</div>
+		</div>
+		<div class="mb-3">
+			<label for="avatar">Avatar image</label>
+			<input 
+				type="file" 
+				class="form-control" 
+				accept="image/*" 
+				#fileImage
+				encodeBase64
+				(encoded)="imageBase64 = $event"
+				formControlName="avatar"
+				[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" 
+      />
+			<div class="invalid-feedback">An image is required.</div>
+		</div>
+		@if (imageBase64) {
+		<img [src]="imageBase64" alt="" id="imgPreview" class="img-thumbnail" />
+		}
+		<p class="text-danger" id="errorInfo"></p>
+		<button class="btn btn-secondary" (click)="goBack()">Go back</button>
+		<button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Create account</button>
+	</form>
+</div>
