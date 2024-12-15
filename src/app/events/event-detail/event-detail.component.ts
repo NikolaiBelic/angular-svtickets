@@ -1,4 +1,4 @@
-import { Component, inject, effect, input, output, signal } from '@angular/core';
+import { Component, inject, effect, input, output, signal, CreateEffectOptions } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MyEvent } from '../interfaces/MyEvent';
@@ -18,7 +18,8 @@ export class EventDetailComponent {
     effect(() => {
       this.#title.setTitle(this.event()!.title + ' | Angular Events');
       this.coordinates.set([this.event()!.lng, this.event()!.lat]);
-    });
+      console.log(this.coordinates());
+    }, { allowSignalWrites: true } as CreateEffectOptions);
   }
 
   coordinates = signal<[number, number]>([0, 0]);
