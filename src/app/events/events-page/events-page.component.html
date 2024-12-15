@@ -4,17 +4,17 @@
     <div class="container-fluid">
       <ul class="nav">
         <li class="nav-item">
-          <button class="nav-link" href="#" id="orderDate" (click)="orderByDate()">Order by date</button>
+          <button class="nav-link" id="orderDate" (click)="changeOrder('date')">Order by date</button>
         </li>
         <li class="nav-item">
-          <button class="nav-link" href="#" id="orderPrice" (click)="orderByPrice()">Order by price</button>
+          <button class="nav-link" id="orderPrice" (click)="changeOrder('price')">Order by price</button>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" id="orderDistance">Distance</a>
+          <button class="nav-link" id="orderDistance" (click)="changeOrder('distance')">Distance</button>
         </li>
       </ul>
       <form class="d-flex mb-0">
-        <input class="form-control me-2" type="text" name="search" id="search" placeholder="Search" aria-label="Search" [(ngModel)]="search">
+        <input class="form-control me-2" type="text" name="search" id="search" placeholder="Search" aria-label="Search" [formControl]="searchEvents">
       </form>
     </div>
   </nav>
@@ -27,9 +27,9 @@
 
   <div id="eventsContainer" class="mb-4 mt-4 row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
 
-    @if (filteredEvents().length) {
+    @if (events().length) {
 
-    @for (event of filteredEvents(); track event.id) {
+    @for (event of events(); track event.id) {
 
     <event-card [event]="event" (deleted)="deleteEvent(event)"></event-card>
     }

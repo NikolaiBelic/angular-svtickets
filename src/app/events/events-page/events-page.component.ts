@@ -1,14 +1,16 @@
-import { Component, signal, computed, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal, computed, inject, DestroyRef, effect } from '@angular/core';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MyEvent } from '../interfaces/MyEvent';
 import { EventCardComponent } from '../event-card/event-card.component';
 import { EventsService } from '../services/events.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { debounceTime } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'events-page',
     standalone: true,
-    imports: [FormsModule, EventCardComponent],
+    imports: [ReactiveFormsModule, EventCardComponent],
     templateUrl: './events-page.component.html',
     styleUrl: './events-page.component.css'
 })
@@ -17,61 +19,47 @@ export class EventsPageComponent {
   events = signal<MyEvent[]>([]);
 
   #eventsService = inject(EventsService);
-  page = 1;
+  page = signal<number>(1);
   count = signal<number>(0);
+  order = signal<string>('distance');
+  searchEvents = new FormControl('');
+  #destroyRef = inject(DestroyRef);
 
-  search = signal('');
-  filteredEvents = computed(() => {
-    const searchLower = this.search()?.toLocaleLowerCase();
-    return searchLower
-      ? this.events().filter((event) =>
-        event.title.toLocaleLowerCase().includes(searchLower) ||
-        event.description.toLocaleLowerCase().includes(searchLower)
-      )
-      : this.events();
-  });
+  search = toSignal(this.searchEvents.valueChanges.pipe(debounceTime(600)), { initialValue: '' });
 
   constructor() {
-    const ev = this.#eventsService
-      .getEvents()
-      .pipe(takeUntilDestroyed())
+    effect(() => {
+      this.loadEvents();
+    }, { allowSignalWrites: true });
+  }
+
+  loadEvents() {
+    this.#eventsService
+      .getEvents(this.page(), this.order(), this.search()!)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
       .subscribe((events) => {
-        console.log(events);
-        this.events.set(events.events)
+        if (this.page() === 1) {
+          this.events.set(events.events);
+        } else {
+          this.events.update(existingEvents => [...existingEvents, ...events.events]);
+        }
         this.count.set(events.count);
-        console.log(events.count);
-        console.log(events.page);
-        console.log(events.more);
-        console.log(events.events);
-    });
+        console.log(this.count());
+        console.log(this.events().length);
+      });
+  }
+
+  changeOrder(order: string) {
+    this.page.set(1);
+    this.order.set(order);
+    // Reset page to 1 when order changes
   }
 
   loadMore() {
-    this.page++;
-    this.#eventsService
-      .getEvents(this.page, 'distance', this.search())
-      .pipe()
-      .subscribe((events) => {
-        this.events.set([...this.events(), ...events.events]);
-        console.log(this.events());
-      });
-
-      
-  }
-
-  addEvent(event: MyEvent) {
-    this.events.update(events => [...events, event]);
+    this.page.update(page => page + 1);      
   }
 
   deleteEvent(event: MyEvent) {
     this.events.update(events => events.filter((e) => e !== event));
-  }
-
-  orderByDate() {
-    this.events.set(this.events().toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-  }
-
-  orderByPrice() {
-    this.events.set(this.events().toSorted((a, b) => a.price - b.price)); // Actualiza la señal con el nuevo array ordenado
   }
 }

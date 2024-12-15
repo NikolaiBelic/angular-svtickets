@@ -46,3 +46,14 @@ export class EventsService {
     return this.#http.delete<void>(`${this.#eventsUrl}/${id}`);
   }
 }
+
+
+/* filteredEvents = computed(() => {
+    const searchLower = this.search()?.toLocaleLowerCase();
+    return searchLower
+      ? this.events().filter((event) =>
+        event.title.toLocaleLowerCase().includes(searchLower) ||
+        event.description.toLocaleLowerCase().includes(searchLower)
+      )
+      : this.events();
+  }); */
