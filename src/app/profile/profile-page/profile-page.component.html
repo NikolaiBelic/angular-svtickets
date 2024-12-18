@@ -1,0 +1,118 @@
+<div class="container">
+	<div class="row mt-4" id="profile">
+		<div class="col-3">
+			<div>
+				<img class="w-100" id="avatar" [src]="imageBase64()" alt="" />
+
+				@if (user().me) {
+				<label class="btn btn-sm btn-danger">
+					<i class="bi bi-image"></i>
+					<input type="file" id="photoInput" class="d-none" accept="image/*" #fileImage encodeBase64
+						(encoded)="saveAvatar($event)" />
+				</label>
+				}
+
+			</div>
+		</div>
+
+		<div class="col-9" id="profileInfo">
+			@if(!editingPassword() && !editingProfile()) {
+			<!--  Cambiar h4 por inputs con un botón -->
+			<h4 id="name">{{ user().name }}</h4>
+			<h4 id="email">
+				<small class="text-muted">{{ user().email }}</small>
+			</h4>
+			}
+			@if (editingProfile()) {
+			<div class="col-9" id="profileForm">
+				<form [formGroup]="editProfileForm" (ngSubmit)="saveProfile()">
+					<div class="mb-3">
+						<label for="email">Email:</label>
+						<input type="email" class="form-control" name="email" formControlName="email"
+							value="{{ this.user().email }}"
+							[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" />
+						@let emailErrors = editProfileForm.get('email')?.errors;
+						@if(emailErrors?.['required']) {
+						<div class="invalid-feedback">Email is required.</div>
+						} @if (emailErrors?.['email']) {
+						<div class="invalid-feedback">Email is not valid.</div>
+						}
+						<label for="name">Name:</label>
+						<input type="text" class="form-control" name="name" formControlName="name"
+							value="{{ this.user().name }}"
+							[validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" />
+						@let nameErrors = editProfileForm.get('name')?.errors;
+						@if(nameErrors?.['required']) {
+						<div class="invalid-feedback">Name is required.</div>
+						}
+					</div>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-danger" id="cancelEditProfile"
+						(click)="editProfile()">Cancel</button>
+				</form>
+			</div>
+			}
+			@if (editingPassword()) {
+			<div class="col-9" id="passwordForm">
+				<form [formGroup]="editPasswordForm" (ngSubmit)="savePassword()">
+					<div class="mb-3">
+						<label for="password">Password:</label>
+						<input type="password" class="form-control" name="password" formControlName="password"
+							placeholder="Password" [validationClasses]="{ valid: 'is-valid', invalid: 'is-invalid' }" />
+						@let passwordErrors = editPasswordForm.get('password')?.errors;
+						@if(passwordErrors?.['required']) {
+						<div class="invalid-feedback">Password is required.</div>
+						} @if(passwordErrors?.['minlength']) {
+						<div class="invalid-feedback">
+							Te faltan al menos
+							{{passwordErrors?.['minlength'].requiredLength -
+							passwordErrors?.['minlength'].actualLength}}
+							caracteres más
+						</div>
+						}
+						<label for="password2">Repeat password:</label>
+						@let password2 = editPasswordForm.get('password2')!;
+						<input type="password" class="form-control" name="password2" formControlName="password2"
+							placeholder="Repeat password" [class]="{
+									'is-valid': password2.touched && !editPasswordForm.errors?.['equalValues'],
+									'is-invalid': password2.touched && editPasswordForm.errors?.['equalValues']
+								}" />
+						<div class="invalid-feedback">Password do not match!</div>
+					</div>
+					<button type="submit" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-danger" id="cancelEditPassword"
+						(click)="editPassword()">Cancel</button>
+				</form>
+			</div>
+			}
+			<!-- Añadir campo de modificar password que muestre 2 campos -->
+			<div>
+				@if (user().me && !editingPassword() && !editingProfile()) {
+				<button class="btn btn-primary" id="editProfile" (click)="editProfile()">
+					<i class="fa-regular fa-pen-to-square"></i>
+					Edit profile
+				</button>
+				<button class="btn btn-success" id="editPassword" (click)="editPassword()">
+					<i class="fa-solid fa-lock"></i>
+					Edit password
+				</button>
+				}
+
+				@if (!editingProfile() && !editingPassword()) {
+					<a class="btn btn-danger" [routerLink]="['/events']" [queryParams]="{ creator: user().id }">Created events</a>
+					<a class="btn btn-secondary" [routerLink]="['/events']" [queryParams]="{ attending: user().id }">Attending events</a>
+				}
+				
+			</div>
+		</div>
+	</div>
+
+	<div class="mt-4" id="map">
+		<div style="position: relative;">
+			<ol-map [coordinates]="coordinates()">
+				<ol-marker [coordinates]="coordinates()"></ol-marker>
+			</ol-map>
+		</div>
+	</div>
+
+</div>

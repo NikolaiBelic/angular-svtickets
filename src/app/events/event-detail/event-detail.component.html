@@ -20,14 +20,14 @@
 
 <div class="container mt-4">
     <div id="eventContainer" class="row">
-        <event-card [event]="event()" (deleted)="eventDeleted()"></event-card>
+        <event-card [event]="event()" (attendChanged)="attendChanged()" (deleted)="eventDeleted()"></event-card>
     </div>
 
     <div class="card mt-4">
         <div class="card-header bg-success text-white" id="address">{{ event().address }}</div>
         <div style="position: relative;">
-            <ol-map [coordinates]="coordinates()">
-                <ol-marker [coordinates]="coordinates()"></ol-marker>
+            <ol-map [coordinates]="coordinates">
+                <ol-marker [coordinates]="coordinates"></ol-marker>
             </ol-map>
         </div>
     </div>
@@ -35,14 +35,41 @@
     <div class="card mt-4 mb-4">
         <div class="card-header bg-danger text-white" id="attendees">Attendees to the event</div>
         <ul class="list-group" id="userList">
-            <!-- Attendees go here. See the template at the bottom of this page -->
+            @for (user of users(); track user.id) {
+            <li class="list-group-item">
+                <a class="avatar" [routerLink]="['/profile', user.id]" >
+                    <img class="rounded-circle float-start me-3" style="width: 40px;" [src]="user.avatar" alt="" />
+                </a>
+                <div>
+                    <div><a class="text-decoration-none name" [routerLink]="['/profile', user.id]">{{ user.name }} </a></div>
+                    <div>
+                        <small class="email">{{ user.email }}</small>
+                    </div>
+                </div>
+            </li>
+        }
         </ul>
     </div>
 
-    <!-- WE WON'T IMPLEMENT COMMENTS IN THE FIRST PROJECT -->
-    <!-- <div class="card mt-4 mb-4">
+    <div class="card mt-4 mb-4">
       <div class="card-header bg-info text-white" id="address">User comments</div>
       <ul class="list-group" id="userComments">
+
+        <li class="list-group-item">
+            <div class="row">
+              <div class="col-auto text-center user-info">
+                <a class="avatar" href="">
+                  <img class=" rounded-circle" src="" alt=""/>
+                </a>
+                <div><small><a class="text-decoration-none name" href="">Pepito Pérez</a></small></div>
+                <div><small class="date">19/11/2021 22:00</small></div>
+              </div>
+              <div class="col comment">
+                User comment...
+              </div>
+            </div>
+          </li>
+          
       </ul>
-    </div> -->
+    </div>
 </div>

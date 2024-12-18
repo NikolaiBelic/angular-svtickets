@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { EventsResponse, SingleEventResponse } from '../interfaces/responses';
+import { EventsResponse, SingleEventResponse, UsersResponse } from '../interfaces/responses';
 import { map, Observable } from 'rxjs';
 import { MyEvent, MyEventInsert } from '../interfaces/MyEvent';
 
@@ -11,7 +11,7 @@ export class EventsService {
   #eventsUrl = 'events';
   #http = inject(HttpClient);
 
-  getEvents(page = 1, order = 'distance', search = '', creator?: number): Observable<EventsResponse> {
+  getEvents(page = 1, order = 'distance', search = '', creator?: number, attending?: number): Observable<EventsResponse> {
     let params = new HttpParams()
       .set('page', String(page))
       .set('order', order)
@@ -19,6 +19,10 @@ export class EventsService {
 
     if (creator) {
       params = params.set('creator', String(creator));
+    }
+
+    if (attending) {
+      params = params.set('attending', String(attending));
     }
 
     return this.#http.get<EventsResponse>(`${this.#eventsUrl}`, { params });
@@ -45,6 +49,18 @@ export class EventsService {
   deleteEvent(id: number): Observable<void> {
     return this.#http.delete<void>(`${this.#eventsUrl}/${id}`);
   }
+
+  postAttend(id: number): Observable<void> {
+    return this.#http.post<void>(`${this.#eventsUrl}/${id}/attend`, {});
+  }
+
+  deleteAttend(id: number): Observable<void> {
+    return this.#http.delete<void>(`${this.#eventsUrl}/${id}/attend`);
+  }
+
+  getAttendees(id: number): Observable<UsersResponse> {
+    return this.#http.get<UsersResponse>(`${this.#eventsUrl}/${id}/attend`);
+}
 }
 
 

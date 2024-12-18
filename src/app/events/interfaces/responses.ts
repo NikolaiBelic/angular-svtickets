@@ -1,4 +1,5 @@
 import { MyEvent } from "./MyEvent";
+import { User } from "../../profile/interfaces/user";
 
 export interface EventsResponse {
   events: MyEvent[];
@@ -9,4 +10,8 @@ export interface EventsResponse {
 
 export interface SingleEventResponse {
   event: MyEvent;
+}
+
+export interface UsersResponse {
+  users: User[];
 }
