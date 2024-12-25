@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { logoutActivateGuard } from '../shared/guards/logout-activate.guard';
 
 export const authRoutes: Routes = [
   {
@@ -8,6 +9,7 @@ export const authRoutes: Routes = [
         (m) => m.LoginComponent
       ),
     title: 'Login Page | Angular Events',
+    canActivate: [logoutActivateGuard],
   },
   {
     path: 'register',
@@ -16,5 +18,6 @@ export const authRoutes: Routes = [
         (m) => m.RegisterComponent
       ),
     title: 'Register Page | Angular Events',
+    canActivate: [logoutActivateGuard],
     }
 ];

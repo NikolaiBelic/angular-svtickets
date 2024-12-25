@@ -27,18 +27,21 @@ import { Title } from '@angular/platform-browser';
 export class EventFormComponent implements CanComponentDeactivate {
   constructor() {
     effect(() => {
-      if (this.isEditMode()) {
-      this.#title.setTitle(this.event()!.title + ' | Angular Events');
-      this.eventForm.patchValue({
-				title: this.event().title,
-				date: this.event().date,
-        description: this.event().description,
-        price: this.event().price,
-        image: this.event().image,
-      });
-      console.log(this.event());
-      }
       this.editMode();
+      if (this.isEditMode()) {
+        this.#title.setTitle(this.event()!.title + ' | Angular Events');
+        this.eventForm.patchValue({
+          title: this.event().title,
+          date: this.event().date.split(' ')[0],
+          description: this.event().description,
+          price: this.event().price
+        });
+        this.address.set(this.event().address);
+        this.imageBase64 = this.event().image;
+        this.coordinates.set([this.event().lng, this.event().lat]);
+        console.log(this.imageBase64);
+      }
+
     }, { allowSignalWrites: true });
   }
 
@@ -69,9 +72,11 @@ export class EventFormComponent implements CanComponentDeactivate {
   editMode() {
     this.#route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id) {
+      if (id && this.event().mine) {
         this.isEditMode.set(true);
         console.log(this.isEditMode());
+      } else if (id && !this.event().mine) {
+        this.#router.navigate(['/events']);
       } else {
         this.isEditMode.set(false);
         console.log(this.isEditMode());
@@ -88,19 +93,35 @@ export class EventFormComponent implements CanComponentDeactivate {
   }
 
   addEvent() {
-    this.#eventsService
-      .insertEvent({
-        ...this.eventForm.getRawValue(),
-        image: this.imageBase64,
-        lat: this.coordinates()[1],
-        lng: this.coordinates()[0],
-        address: this.address()
-      })
-      .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe(() => {
-        this.#saved = true;
-        this.#router.navigate(['/events']);
-      });
+    if (this.isEditMode()) {
+      this.#eventsService
+        .updateEvent(this.event().id, {
+          ...this.eventForm.getRawValue(),
+          image: this.imageBase64,
+          lat: this.coordinates()[1],
+          lng: this.coordinates()[0],
+          address: this.address()
+        })
+        .pipe(takeUntilDestroyed(this.#destroyRef))
+        .subscribe(() => {
+          this.#saved = true;
+          this.#router.navigate([`/events/${this.event().id}`]);
+        });
+    } else {
+      this.#eventsService
+        .insertEvent({
+          ...this.eventForm.getRawValue(),
+          image: this.imageBase64,
+          lat: this.coordinates()[1],
+          lng: this.coordinates()[0],
+          address: this.address()
+        })
+        .pipe(takeUntilDestroyed(this.#destroyRef))
+        .subscribe(() => {
+          this.#saved = true;
+          this.#router.navigate(['/events']);
+        });
+    }
   }
 
   changePlace(result: SearchResult) {

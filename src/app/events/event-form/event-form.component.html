@@ -100,16 +100,31 @@
       @if (imageBase64) {
       <img [src]="imageBase64" alt="" id="imgPreview" class="img-thumbnail mb-3">
       }
-      <div style="position: relative;">
+      <div class="card mt-4">
+        @if (isEditMode()) {
+        <div class="card-header bg-success text-white" id="address">{{ address() }}</div>
+        }
+        <div style="position: relative;">
+            <ol-map [coordinates]="coordinates()">
+              <ga-autocomplete (locationChange)="changePlace($event)"></ga-autocomplete>
+                <ol-marker [coordinates]="coordinates()"></ol-marker>
+            </ol-map>
+        </div>
+    </div>
+      <!-- <div style="position: relative;">
         <ol-map [coordinates]="coordinates()">
           <ga-autocomplete (locationChange)="changePlace($event)"></ga-autocomplete>
           <ol-marker [coordinates]="coordinates()"></ol-marker>
         </ol-map>
-      </div>
+      </div> -->
       <!-- <div id="autocomplete" class="autocomplete-container"></div>
       <div id="map" class="mb-3"></div> -->
       <div>
+        @if (isEditMode()) {
+        <button type="submit" class="btn btn-primary">Update</button>
+        } @else {
         <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid">Create</button>
+        }
       </div>
     </form>
   </div>

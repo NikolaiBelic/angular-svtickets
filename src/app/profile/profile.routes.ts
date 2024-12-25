@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { numericIdGuard } from '../shared/guards/numeric-id.guard';
 import { profileResolver } from './resolvers/profile.resolver';
+import { loginActivateGuard } from '../shared/guards/login-activate.guard';
 
 export const profileRoutes: Routes = [
     {
@@ -12,7 +13,8 @@ export const profileRoutes: Routes = [
         title: 'Profile Page | Angular Events',
         resolve: {
             user: profileResolver,
-        }
+        },
+        canActivate: [loginActivateGuard]
     },
     {
         path: ':id',
@@ -24,7 +26,7 @@ export const profileRoutes: Routes = [
         resolve: {
             user: profileResolver,
         },
-        canActivate: [numericIdGuard],
+        canActivate: [numericIdGuard, loginActivateGuard],
     },
     {
       path: '',

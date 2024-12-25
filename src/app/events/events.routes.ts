@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { leavePageGuard } from '../shared/guards/leave-page.guard';
 import { numericIdGuard } from '../shared/guards/numeric-id.guard';
 import { eventResolver } from './resolvers/event.resolver';
+import { loginActivateGuard } from '../shared/guards/login-activate.guard';
 
 export const eventsRoutes: Routes = [
   {
@@ -11,6 +12,7 @@ export const eventsRoutes: Routes = [
         (m) => m.EventsPageComponent
       ),
     title: 'Events Page | Angular Events',
+    canActivate: [loginActivateGuard]
   },
   {
     path: 'add',
@@ -20,6 +22,7 @@ export const eventsRoutes: Routes = [
       ),
     title: 'New Event | Angular Events',
     canDeactivate: [leavePageGuard],
+    canActivate: [loginActivateGuard]
   },
   {
     path: ':id/edit',
@@ -32,6 +35,7 @@ export const eventsRoutes: Routes = [
       event: eventResolver,
     },
     canDeactivate: [leavePageGuard],
+    canActivate: [loginActivateGuard]
   },
   {
     path: ':id',
@@ -42,6 +46,7 @@ export const eventsRoutes: Routes = [
     resolve: {
       event: eventResolver,
     },
-    canActivate: [numericIdGuard],
+    canActivate: [numericIdGuard, loginActivateGuard],
+    
   },
 ];
