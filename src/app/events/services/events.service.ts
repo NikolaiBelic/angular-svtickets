@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { EventsResponse, SingleEventResponse, UsersResponse } from '../interfaces/responses';
+import { EventsResponse, SingleEventResponse, UsersResponse, CommentsResponse } from '../interfaces/responses';
 import { map, Observable } from 'rxjs';
-import { MyEvent, MyEventInsert } from '../interfaces/MyEvent';
+import { MyEvent, MyEventInsert, Comment } from '../interfaces/MyEvent';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,12 @@ export class EventsService {
       .pipe(map((resp) => resp.event));
   }
 
+  updateEvent(id: number, event: MyEventInsert): Observable<MyEventInsert> { 
+    return this.#http
+      .put<SingleEventResponse>(`${this.#eventsUrl}/${id}`, event)
+      .pipe(map((resp) => resp.event));
+  }
+
   deleteEvent(id: number): Observable<void> {
     return this.#http.delete<void>(`${this.#eventsUrl}/${id}`);
   }
@@ -60,7 +66,15 @@ export class EventsService {
 
   getAttendees(id: number): Observable<UsersResponse> {
     return this.#http.get<UsersResponse>(`${this.#eventsUrl}/${id}/attend`);
-}
+  }
+
+  getComments(id: number): Observable<CommentsResponse> {
+    return this.#http.get<CommentsResponse>(`${this.#eventsUrl}/${id}/comments`);
+  }
+
+  postComment(id: number, comment: string): Observable<void> {
+    return this.#http.post<void>(`${this.#eventsUrl}/${id}/comments`, { comment });
+  }
 }
 
 

@@ -21,6 +21,9 @@
           <a class="text-decoration-none" [routerLink]="['/events', event().id]">{{ event().title }}</a>
         </h4>
         <p class="card-text">{{ event().description }}</p>
+        @if (event().mine === true) {
+        <a class="btn btn-primary" [routerLink]="['/events', event().id, 'edit']">Edit</a>.
+        }
         <div class="row">
           <!-- Remove this div if event is not mine -->  
           <div class="col">

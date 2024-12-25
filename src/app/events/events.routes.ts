@@ -22,6 +22,18 @@ export const eventsRoutes: Routes = [
     canDeactivate: [leavePageGuard],
   },
   {
+    path: ':id/edit',
+    loadComponent: () =>
+      import('./event-form/event-form.component').then(
+        (m) => m.EventFormComponent
+      ),
+    title: 'Edit Event | Angular Events',
+    resolve: {
+      event: eventResolver,
+    },
+    canDeactivate: [leavePageGuard],
+  },
+  {
     path: ':id',
     loadComponent: () =>
       import('./event-detail/event-detail.component').then(

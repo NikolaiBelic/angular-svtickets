@@ -54,22 +54,34 @@
     <div class="card mt-4 mb-4">
       <div class="card-header bg-info text-white" id="address">User comments</div>
       <ul class="list-group" id="userComments">
-
+        
+        @if (comments().length > 0) {
+        @for (comment of comments(); track comment.id) {
         <li class="list-group-item">
             <div class="row">
               <div class="col-auto text-center user-info">
-                <a class="avatar" href="">
-                  <img class=" rounded-circle" src="" alt=""/>
+                <a class="avatar" [routerLink]="['/profile', comment.user.id]">
+                  <img class=" rounded-circle" [src]="comment.user.avatar" alt=""/>
                 </a>
-                <div><small><a class="text-decoration-none name" href="">Pepito Pérez</a></small></div>
-                <div><small class="date">19/11/2021 22:00</small></div>
+                <div><small><a class="text-decoration-none name" [routerLink]="['/profile', comment.user.id]">{{ comment.user.name }}</a></small></div>
+                <div><small class="date">{{ comment.date | date:'dd/MM/yyyy HH:mm' }}</small></div>
               </div>
               <div class="col comment">
-                User comment...
+                {{ comment.comment }}
               </div>
             </div>
           </li>
-          
+        }
+        } @else {
+            <li class="list-group-item">No hay comentarios disponibles.</li>
+        }
       </ul>
     </div>
+
+    <form [formGroup]="commentForm" (ngSubmit)="postComment()" class="mt-4">
+        <div class="form-group">
+        <textarea formControlName="comment" class="form-control" placeholder="Write a comment"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Send</button>
+        </form>
 </div>

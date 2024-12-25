@@ -1,4 +1,4 @@
-import { MyEvent } from "./MyEvent";
+import { MyEvent, Comment } from "./MyEvent";
 import { User } from "../../profile/interfaces/user";
 
 export interface EventsResponse {
@@ -14,4 +14,8 @@ export interface SingleEventResponse {
 
 export interface UsersResponse {
   users: User[];
+}
+
+export interface CommentsResponse {
+    comments: Comment[];
 }
