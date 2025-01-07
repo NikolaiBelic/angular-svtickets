@@ -9,11 +9,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
 import { ErrorModalComponent } from '../../shared/modals/error-modal/error-modal.component';
+import { GoogleLoginDirective } from '../google-login/google-login.directive';
 
 @Component({
   selector: 'login',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective],
+  imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -68,5 +69,10 @@ export class LoginComponent implements OnInit {
           }, 1500);
         }
       });
+  }
+
+  loggedGoogle(resp: google.accounts.id.CredentialResponse) {
+    // Envia esto tu API
+    console.log(resp.credential);
   }
 }

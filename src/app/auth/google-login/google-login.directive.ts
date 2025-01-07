@@ -1,9 +1,11 @@
-import { Directive, inject, output, afterNextRender } from '@angular/core';
+import { Directive, inject, output, afterNextRender, ElementRef, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadGoogleApiService } from './load-google-api.service';
 
 @Directive({
   selector: 'google-login',
+  standalone: true
 })
 export class GoogleLoginDirective {
   #element = inject(ElementRef);
