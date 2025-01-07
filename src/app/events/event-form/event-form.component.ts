@@ -37,7 +37,7 @@ export class EventFormComponent implements CanComponentDeactivate {
           price: this.event().price
         });
         this.address.set(this.event().address);
-        this.imageBase64 = this.event().image;
+        this.imageBase64 = this.event().image!;
         this.coordinates.set([this.event().lng, this.event().lat]);
         console.log(this.imageBase64);
       }
@@ -94,10 +94,14 @@ export class EventFormComponent implements CanComponentDeactivate {
 
   addEvent() {
     if (this.isEditMode()) {
+      const imageToSend = this.imageBase64.startsWith('data:image') ? this.imageBase64 : this.event().image;
+      console.log(this.event().image);
+      console.log(imageToSend);
+
       this.#eventsService
         .updateEvent(this.event().id, {
           ...this.eventForm.getRawValue(),
-          image: this.imageBase64,
+          image: imageToSend,
           lat: this.coordinates()[1],
           lng: this.coordinates()[0],
           address: this.address()
