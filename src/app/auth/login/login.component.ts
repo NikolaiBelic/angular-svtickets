@@ -10,15 +10,20 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
 import { ErrorModalComponent } from '../../shared/modals/error-modal/error-modal.component';
 import { GoogleLoginDirective } from '../google-login/google-login.directive';
+import { FbLoginDirective } from '../facebook-login/fb-login.directive';
+import { faFacebook } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'login',
   standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective],
+  imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective,
+     FbLoginDirective, FontAwesomeModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
+  iconFacebook = faFacebook;
   #fb = inject(NonNullableFormBuilder);
   coords: Coordinates = { latitude: 0, longitude: 0 };
   #authService = inject(AuthService);
@@ -73,6 +78,17 @@ export class LoginComponent implements OnInit {
 
   loggedGoogle(resp: google.accounts.id.CredentialResponse) {
     // Envia esto tu API
+    localStorage.setItem('token', resp.credential);
+    this.#router.navigate(['/events']);
     console.log(resp.credential);
+  }
+
+  loggedFacebook(resp: fb.StatusResponse) {
+    // Envía esto a tu API
+    console.log(resp.authResponse.accessToken);
+  }
+
+  showError(error: any) {
+    console.error(error);
   }
 }
