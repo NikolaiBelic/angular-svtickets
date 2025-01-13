@@ -18,7 +18,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   selector: 'login',
   standalone: true,
   imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective,
-     FbLoginDirective, FontAwesomeModule],
+    FbLoginDirective, FontAwesomeModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -78,14 +78,50 @@ export class LoginComponent implements OnInit {
 
   loggedGoogle(resp: google.accounts.id.CredentialResponse) {
     // Envia esto tu API
-    localStorage.setItem('token', resp.credential);
-    this.#router.navigate(['/events']);
     console.log(resp.credential);
+    this.#authService
+      .loginGoogle(resp.credential)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe({
+        next: () => {
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          setTimeout(() => {
+            modalRefSuccess.close();
+            this.#router.navigate(['/events']);
+          }, 1500);
+        },
+        error: (error) => {
+          console.error(error);
+          const modalRefError = this.#modalService.open(ErrorModalComponent);
+          setTimeout(() => {
+            modalRefError.close();
+          }, 1500);
+        }
+      });
   }
 
   loggedFacebook(resp: fb.StatusResponse) {
     // Envía esto a tu API
     console.log(resp.authResponse.accessToken);
+    this.#authService
+      .loginFacebook(resp.authResponse.accessToken!)
+      .pipe(takeUntilDestroyed(this.#destroyRef))
+      .subscribe({
+        next: () => {
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          setTimeout(() => {
+            modalRefSuccess.close();
+            this.#router.navigate(['/events']);
+          }, 1500);
+        },
+        error: (error) => {
+          console.error(error);
+          const modalRefError = this.#modalService.open(ErrorModalComponent);
+          setTimeout(() => {
+            modalRefError.close();
+          }, 1500);
+        }
+      });
   }
 
   showError(error: any) {

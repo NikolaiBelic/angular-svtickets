@@ -15,7 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)), 
     provideHttpClient(withInterceptors([baseUrlInterceptor, authInterceptor])),
     provideGoogleId('746820501392-oalflicqch2kuc12s8rclb5rf7b1fist.apps.googleusercontent.com'), 
-    provideFacebookId('APP_ID', 'v15.0')
+    provideFacebookId('2024262238091054', 'v21.0')
   ]
 };
 //provideZoneChangeDetection({ eventCoalescing: true })

@@ -27,6 +27,28 @@ export class AuthService {
             );
     }
 
+    loginGoogle(token: string): Observable<void> {
+        return this.#http
+            .post<TokenResponse>(`${this.#authUrl}/google`, { token })
+            .pipe(
+                map((resp) => {
+                    localStorage.setItem('token', resp.accessToken);
+                    this.#logged.set(true);
+                })
+            );
+    }
+
+    loginFacebook(token: string): Observable<void> {
+        return this.#http
+            .post<TokenResponse>(`${this.#authUrl}/facebook`, { token })
+            .pipe(
+                map((resp) => {
+                    localStorage.setItem('token', resp.accessToken);
+                    this.#logged.set(true);
+                })
+            );
+    }
+
     logout(): void {
         localStorage.removeItem('token');
         this.#logged.set(false);
