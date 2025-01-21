@@ -96,19 +96,3 @@ export class EventDetailComponent {
     this.loadUsers();
   }
 }
-
-/* {
-  "id": 2,
-  "comment": "Hola, funciona?",
-  "date": "2024-12-20T17:59:37.903Z",
-  "user": {
-      "name": "Nikkolai",
-      "email": "nikko@test.com",
-      "password": "D/4avRoIIVNTwjPW4AlhPpXuxCU4Mqdhryj/N6xaFQw=",
-      "avatar": "http://api.fullstackpro.es/svtickets/img/users/1734548820534.jpg",
-      "lat": 38.390989,
-      "lng": -0.514458,
-      "firebaseToken": null,
-      "id": 11
-  }
-} */
