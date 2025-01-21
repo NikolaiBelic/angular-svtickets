@@ -4,12 +4,13 @@ import { MyEvent } from '../interfaces/MyEvent';
 import { EventsService } from '../services/events.service';
 import { IntlCurrencyPipe } from '../../shared/pipes/intl-currency.pipe';
 import { RouterLink } from '@angular/router';
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faThumbsDown, faThumbsUp, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'event-card',
     standalone: true,
-    imports: [DatePipe, IntlCurrencyPipe, RouterLink],
+    imports: [DatePipe, IntlCurrencyPipe, RouterLink, FontAwesomeModule],
     templateUrl: './event-card.component.html',
     styleUrl: './event-card.component.css'
 })
@@ -21,6 +22,8 @@ export class EventCardComponent {
 
   attend = signal<boolean>(false);
   numAttend = signal<number>(0);
+
+  icons = {faThumbsDown, faThumbsUp, faTrash};
 
   ngOnInit() {
     this.attend.set(this.event().attend);

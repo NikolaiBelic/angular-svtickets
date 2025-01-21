@@ -28,15 +28,15 @@
           <!-- Remove this div if event is not mine -->  
           <div class="col">
             @if (event().mine === true) {
-            <button class="btn btn-danger delete" (click)="deleteEvent()"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-danger delete" (click)="deleteEvent()"><fa-icon [icon]="icons.faTrash"></fa-icon></button>
             }
         </div>
           <div class="col-auto ms-auto">
             <div class="text-end attend-users"><i class="bi bi-people-fill"></i> {{ numAttend() }}</div>
             @if (attend() === true) {
-              <div class="text-success text-end m-0 attend-button" (click)="deleteAttend()" tabindex="0" (keydown.enter)="postAttend()"><i class="bi bi-hand-thumbs-up-fill"></i> I'm going</div>
+              <div class="text-success text-end m-0 attend-button" (click)="deleteAttend()" tabindex="0" (keydown.enter)="postAttend()"><fa-icon [icon]="icons.faThumbsUp"></fa-icon> I'm going</div>
               } @else {
-                <div class="text-danger text-end m-0 attend-button" (click)="postAttend()" tabindex="0" (keydown.enter)="postAttend()"><i class="bi bi-hand-thumbs-down-fill"></i> Not going</div>
+                <div class="text-danger text-end m-0 attend-button" (click)="postAttend()" tabindex="0" (keydown.enter)="postAttend()"><fa-icon [icon]="icons.faThumbsDown"></fa-icon> Not going</div>
               }
             <!-- Change to bi-hand-thumbs-down-fill if the user is not attending the event  -->
           </div>

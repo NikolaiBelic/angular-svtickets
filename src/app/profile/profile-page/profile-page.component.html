@@ -6,7 +6,8 @@
 
 				@if (user().me) {
 				<label class="btn btn-sm btn-danger">
-					<i class="bi bi-image"></i>
+					<!-- <i class="bi bi-image"></i> -->
+					<fa-icon [icon]="faImage"></fa-icon>
 					<input type="file" id="photoInput" class="d-none" accept="image/*" #fileImage encodeBase64
 						(encoded)="saveAvatar($event)" />
 				</label>

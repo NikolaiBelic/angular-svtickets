@@ -9,13 +9,13 @@ import { ValidationClassesDirective } from '../../shared/directives/validation-c
 import { equalValues } from '../../shared/validators/equal-values.validator';
 import { EncodeBase64Directive } from '../../shared/directives/encode-base64.directive';
 import { RouterLink } from '@angular/router';
-
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
 	selector: 'profile-page',
 	standalone: true,
-	imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink],
+	imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink, FontAwesomeModule],
 	templateUrl: './profile-page.component.html',
 	styleUrl: './profile-page.component.css'
 })
@@ -28,6 +28,8 @@ export class ProfilePageComponent {
 	#profileService = inject(ProfileService);
 	#fb = inject(NonNullableFormBuilder);
 	imageBase64 = signal<string>('');
+
+	faImage = faImage;
 
 	editProfileForm = this.#fb.group(
 		{
