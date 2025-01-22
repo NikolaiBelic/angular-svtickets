@@ -5,7 +5,7 @@ import { EventsService } from '../services/events.service';
 import { IntlCurrencyPipe } from '../../shared/pipes/intl-currency.pipe';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faThumbsDown, faThumbsUp, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsDown, faThumbsUp, faTrash, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'event-card',
@@ -23,7 +23,7 @@ export class EventCardComponent {
   attend = signal<boolean>(false);
   numAttend = signal<number>(0);
 
-  icons = {faThumbsDown, faThumbsUp, faTrash};
+  icons = {faThumbsDown, faThumbsUp, faTrash, faUserGroup};
 
   ngOnInit() {
     this.attend.set(this.event().attend);

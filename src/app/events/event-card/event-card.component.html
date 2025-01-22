@@ -32,7 +32,8 @@
             }
         </div>
           <div class="col-auto ms-auto">
-            <div class="text-end attend-users"><i class="bi bi-people-fill"></i> {{ numAttend() }}</div>
+            <!-- <div class="text-end attend-users"><i class="bi bi-people-fill"></i> {{ numAttend() }}</div> -->
+            <div class="text-end attend-users"><fa-icon [icon]="icons.faUserGroup"></fa-icon> {{ numAttend() }}</div>
             @if (attend() === true) {
               <div class="text-success text-end m-0 attend-button" (click)="deleteAttend()" tabindex="0" (keydown.enter)="postAttend()"><fa-icon [icon]="icons.faThumbsUp"></fa-icon> I'm going</div>
               } @else {
