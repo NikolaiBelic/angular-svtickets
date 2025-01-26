@@ -36,10 +36,8 @@ export class EventsPageComponent {
 
   constructor() {
     effect(() => {
-      console.log(this.creator());
-      console.log(this.attending());
       this.loadEvents();
-    }, { allowSignalWrites: true });
+    });
   }
 
   loadEvents() {
@@ -64,15 +62,12 @@ export class EventsPageComponent {
           this.name.set('All Events');
         }
         this.count.set(events.count);
-        console.log(this.count());
-        console.log(this.events().length);
       });
   }
 
   changeOrder(order: string) {
     this.page.set(1);
     this.order.set(order);
-    // Reset page to 1 when order changes
   }
 
   loadMore() {

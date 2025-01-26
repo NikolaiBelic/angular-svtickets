@@ -33,11 +33,6 @@ export class EventCardComponent {
     this.numAttend.set(this.event().numAttend);
   }
 
-  /* deleteEvent() {
-    this.#eventsService
-      .deleteEvent(this.event().id!)
-      .subscribe(() => this.deleted.emit());
-  } */
   deleteEvent() {
     const modalRef = this.#modalService.open(ConfirmModalComponent);
     modalRef.componentInstance.title = 'Confirm Deletion';

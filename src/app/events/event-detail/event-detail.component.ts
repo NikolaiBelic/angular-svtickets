@@ -1,4 +1,4 @@
-import { Component, inject, effect, input, output, signal, CreateEffectOptions, DestroyRef } from '@angular/core';
+import { Component, inject, effect, input, output, signal, DestroyRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MyEvent, Comment } from '../interfaces/MyEvent';
@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { ErrorModalComponent } from '../../shared/modals/error-modal/error-modal.component';
+import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -25,8 +25,7 @@ export class EventDetailComponent {
     effect(() => {
       this.#title.setTitle(this.event()!.title + ' | Angular Events');
       this.coordinates = [this.event().lng, this.event().lat];
-      console.log(this.coordinates);
-    }, { allowSignalWrites: true } as CreateEffectOptions);
+    });
   }
 
   #fb = inject(NonNullableFormBuilder);
@@ -67,13 +66,15 @@ export class EventDetailComponent {
     this.#eventsService.postComment(this.event().id, this.commentForm.getRawValue().comment).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: () => {
         this.commentForm.reset();
-        this.loadComments(); // Recargar comentarios después de publicar uno nuevo
+        this.loadComments();
       },
       error: (err) => {
         console.error(err, 'You can\'t comment if you are no attending to the event');
-        const modalRefError = this.#modalService.open(ErrorModalComponent);
+        const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+              modalRefSuccess.componentInstance.title = 'Error';
+              modalRefSuccess.componentInstance.body = 'You can\'t comment if you are no attending to the event';
         setTimeout(() => {
-          modalRefError.close();
+          modalRefSuccess.close();
         }, 1500);
       }
     });
@@ -82,8 +83,7 @@ export class EventDetailComponent {
   loadComments() {
     this.#eventsService.getComments(this.event().id).pipe(takeUntilDestroyed(this.#destroyRef)).subscribe({
       next: (response) => {
-        this.comments.set(response.comments); // Asignar el array de comentarios
-        console.log(this.comments());
+        this.comments.set(response.comments);
       },
       error: (err) => {
         console.error('Error loading comments:', err);

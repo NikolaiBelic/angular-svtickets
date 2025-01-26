@@ -99,6 +99,7 @@
 		}
 		<p class="text-danger" id="errorInfo"></p>
 		<button class="btn btn-secondary" (click)="goBack()">Go back</button>
-		<button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Create account</button>
+		<!-- <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Create account</button> -->
+		<load-button [disabled]="registerForm.invalid || loading()" [loading]="loading()" (click)="loading.set(!loading())">Create account</load-button>
 	</form>
 </div>

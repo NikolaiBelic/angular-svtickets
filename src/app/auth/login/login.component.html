@@ -23,7 +23,8 @@
 	</div>
 	<p class="text-danger" id="errorInfo"></p>
 	<a class="btn btn-secondary" [routerLink]="['/auth/register']" role="button">Create account</a>
-	<button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button>
+	<!-- <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Login</button> -->
+	<load-button [disabled]="loginForm.invalid || loading()" [loading]="loading()" (click)="loading.set(!loading())">Login</load-button>
 	<div>
 		<google-login class="btn" (login)="loggedGoogle($event)"></google-login>
 	</div>

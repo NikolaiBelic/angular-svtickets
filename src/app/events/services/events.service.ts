@@ -28,12 +28,6 @@ export class EventsService {
     return this.#http.get<EventsResponse>(`${this.#eventsUrl}`, { params });
   }
 
-  /* getEvents(): Observable<MyEvent[]> {
-    return this.#http
-      .get<EventsResponse>(this.#eventsUrl)
-      .pipe(map((resp) => resp.events));
-  } */
-
   getEvent(id: number): Observable<MyEvent> {
     return this.#http
       .get<SingleEventResponse>(`${this.#eventsUrl}/${id}`)
@@ -76,14 +70,3 @@ export class EventsService {
     return this.#http.post<void>(`${this.#eventsUrl}/${id}/comments`, { comment });
   }
 }
-
-
-/* filteredEvents = computed(() => {
-    const searchLower = this.search()?.toLocaleLowerCase();
-    return searchLower
-      ? this.events().filter((event) =>
-        event.title.toLocaleLowerCase().includes(searchLower) ||
-        event.description.toLocaleLowerCase().includes(searchLower)
-      )
-      : this.events();
-  }); */

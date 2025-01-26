@@ -17,13 +17,15 @@ import { Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmModalComponent } from '../../shared/modals/confirm-modal/confirm-modal.component';
 import { NgForm } from '@angular/forms';
+import { LoadButtonComponent } from '../../shared/load-button/load-button.component';
+import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
 
 @Component({
-    selector: 'event-form',
-    imports: [ReactiveFormsModule, EncodeBase64Directive, ValidationClassesDirective,
-        DatePipe, GaAutocompleteDirective, OlMapDirective, OlMarkerDirective],
-    templateUrl: './event-form.component.html',
-    styleUrl: './event-form.component.css'
+  selector: 'event-form',
+  imports: [ReactiveFormsModule, EncodeBase64Directive, ValidationClassesDirective,
+    DatePipe, GaAutocompleteDirective, OlMapDirective, OlMarkerDirective, LoadButtonComponent],
+  templateUrl: './event-form.component.html',
+  styleUrl: './event-form.component.css'
 })
 
 export class EventFormComponent implements CanComponentDeactivate {
@@ -38,26 +40,26 @@ export class EventFormComponent implements CanComponentDeactivate {
           title: this.event().title,
           date: this.event().date.split(' ')[0],
           description: this.event().description,
-          price: this.event().price
+          price: this.event().price,
         });
         this.address.set(this.event().address);
         this.imageBase64 = this.event().image!;
         this.coordinates.set([this.event().lng, this.event().lat]);
-        console.log(this.imageBase64);
       }
 
-    }, { allowSignalWrites: true });
+    });
   }
 
   #title = inject(Title);
   #route = inject(ActivatedRoute);
   #fb = inject(NonNullableFormBuilder);
-  minDate = '2024-12-02';
+  minDate = new Date().toISOString().split('T')[0];
   coordinates = signal<[number, number]>([-0.5, 38.5]);
   address = signal<string>('');
   event = input.required<MyEvent>();
   isEditMode = signal<boolean>(false);
   #modalService = inject(NgbModal);
+  loading = signal<boolean>(false);
 
   eventForm = this.#fb.group({
     title: ['', [Validators.required, Validators.minLength(5), Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
@@ -79,12 +81,10 @@ export class EventFormComponent implements CanComponentDeactivate {
       const id = params.get('id');
       if (id && this.event().mine) {
         this.isEditMode.set(true);
-        console.log(this.isEditMode());
       } else if (id && !this.event().mine) {
         this.#router.navigate(['/events']);
       } else {
         this.isEditMode.set(false);
-        console.log(this.isEditMode());
       }
     });
   }
@@ -101,43 +101,76 @@ export class EventFormComponent implements CanComponentDeactivate {
 
   addEvent() {
     if (this.isEditMode()) {
-      const imageToSend = this.imageBase64.startsWith('data:image') ? this.imageBase64 : this.event().image;
-      console.log(this.event().image);
-      console.log(imageToSend);
+      setTimeout(() => {
+        this.loading.set(true);
+        const imageToSend = this.imageBase64.startsWith('data:image') ? this.imageBase64 : this.event().image;
 
-      this.#eventsService
-        .updateEvent(this.event().id, {
-          ...this.eventForm.getRawValue(),
-          image: imageToSend,
-          lat: this.coordinates()[1],
-          lng: this.coordinates()[0],
-          address: this.address()
-        })
-        .pipe(takeUntilDestroyed(this.#destroyRef))
-        .subscribe(() => {
-          this.#saved = true;
-          this.#router.navigate([`/events/${this.event().id}`]);
-        });
+        this.#eventsService
+          .updateEvent(this.event().id, {
+            ...this.eventForm.getRawValue(),
+            image: imageToSend,
+            lat: this.coordinates()[1],
+            lng: this.coordinates()[0],
+            address: this.address()
+          })
+          .pipe(takeUntilDestroyed(this.#destroyRef))
+          .subscribe({
+            next: () => {
+              this.#saved = true;
+              const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+              modalRefSuccess.componentInstance.title = 'Event Updated';
+              modalRefSuccess.componentInstance.body = 'Your event has been updated successfully!';
+              setTimeout(() => {
+                modalRefSuccess.close();
+                this.#router.navigate([`/events/${this.event().id}`]);
+              }, 1500);
+            },
+            error: (error) => {
+              console.error(error);
+              this.loading.set(false);
+              const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+              modalRefSuccess.componentInstance.title = 'Error';
+              modalRefSuccess.componentInstance.body = 'There was an error updating the event. Please try again.';
+            }
+          });
+      }, 2500);
     } else {
-      this.#eventsService
-        .insertEvent({
-          ...this.eventForm.getRawValue(),
-          image: this.imageBase64,
-          lat: this.coordinates()[1],
-          lng: this.coordinates()[0],
-          address: this.address()
-        })
-        .pipe(takeUntilDestroyed(this.#destroyRef))
-        .subscribe(() => {
-          this.#saved = true;
-          this.#router.navigate(['/events']);
-        });
+      setTimeout(() => {
+        this.loading.set(true);
+        this.#eventsService
+          .insertEvent({
+            ...this.eventForm.getRawValue(),
+            image: this.imageBase64,
+            lat: this.coordinates()[1],
+            lng: this.coordinates()[0],
+            address: this.address()
+          })
+          .pipe(takeUntilDestroyed(this.#destroyRef))
+          .subscribe({
+            next: () => {
+              this.#saved = true;
+              const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+              modalRefSuccess.componentInstance.title = 'Event Created';
+              modalRefSuccess.componentInstance.body = 'Your event has been created successfully!';
+              setTimeout(() => {
+                modalRefSuccess.close();
+                this.#router.navigate(['/events']);
+              }, 1500);
+            },
+            error: (error) => {
+              console.error(error);
+              this.loading.set(false);
+              const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+              modalRefSuccess.componentInstance.title = 'Error';
+              modalRefSuccess.componentInstance.body = 'There was an error creating the event. Please try again.';
+            }
+          });
+      }, 2500);
     }
   }
 
   changePlace(result: SearchResult) {
     this.coordinates.set(result.coordinates);
     this.address.set(result.address);
-    console.log(result.address); // Habría que guardarlo
   }
 }

@@ -1,4 +1,4 @@
-import { Component, effect, inject, CreateEffectOptions, input, signal, WritableSignal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { User } from '../interfaces/user';
 import { OlMapDirective } from '../../shared/directives/ol-maps/ol-map.directive';
@@ -11,12 +11,14 @@ import { EncodeBase64Directive } from '../../shared/directives/encode-base64.dir
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
 
 @Component({
-    selector: 'profile-page',
-    imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink, FontAwesomeModule],
-    templateUrl: './profile-page.component.html',
-    styleUrl: './profile-page.component.css'
+	selector: 'profile-page',
+	imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink, FontAwesomeModule],
+	templateUrl: './profile-page.component.html',
+	styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent {
 	#title = inject(Title);
@@ -27,6 +29,7 @@ export class ProfilePageComponent {
 	#profileService = inject(ProfileService);
 	#fb = inject(NonNullableFormBuilder);
 	imageBase64 = signal<string>('');
+	#modalService = inject(NgbModal);
 
 	faImage = faImage;
 
@@ -56,9 +59,8 @@ export class ProfilePageComponent {
 				name: this.user().name,
 				email: this.user().email
 			});
-			console.log(this.editingProfile());
 
-		}, { allowSignalWrites: true } as CreateEffectOptions);
+		});
 	}
 
 	editProfile() {
@@ -76,10 +78,21 @@ export class ProfilePageComponent {
 					this.user().name = this.editProfileForm.getRawValue().name;
 					this.user().email = this.editProfileForm.getRawValue().email;
 					this.editingProfile.set(false);
-					console.log('Profile updated successfully');
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Profile Updated';
+					modalRefSuccess.componentInstance.body = 'Your profile has been updated';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 				},
 				error: (err) => {
 					this.editingProfile.set(false);
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Error';
+					modalRefSuccess.componentInstance.body = 'There was an error updating the profile. Please try again.';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 					console.error('Error updating profile:', err);
 				}
 			});
@@ -90,25 +103,45 @@ export class ProfilePageComponent {
 			.subscribe({
 				next: () => {
 					this.editingPassword.set(false);
-					console.log('Password updated successfully');
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Password Updated';
+					modalRefSuccess.componentInstance.body = 'Your password has been updated';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 				},
 				error: (err) => {
 					this.editingPassword.set(false);
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Error';
+					modalRefSuccess.componentInstance.body = 'There was an error updating the password. Please try again.';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 					console.error('Error updating password:', err);
 				}
 			})
 	}
 
 	saveAvatar(image: string) {
-		console.log(image);
 		this.#profileService.saveAvatar(image)
 			.subscribe({
 				next: () => {
-
 					this.imageBase64.set(image);
-					console.log('Avatar updated successfully');
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Avatar Updated';
+					modalRefSuccess.componentInstance.body = 'Your avatar has been updated';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 				},
 				error: (err) => {
+					const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+					modalRefSuccess.componentInstance.title = 'Error';
+					modalRefSuccess.componentInstance.body = 'There was an error updating the avatar. Please try again.';
+					setTimeout(() => {
+						modalRefSuccess.close();
+					}, 1500);
 					console.error('Error updating avatar:', err);
 				}
 			})

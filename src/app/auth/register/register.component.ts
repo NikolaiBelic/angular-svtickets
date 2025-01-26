@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MyGeolocation } from "../../shared/classes/my-geolocation";
 import { Coordinates } from "../../shared/interfaces/coordinates";
@@ -9,10 +9,13 @@ import { equalValues } from '../../shared/validators/equal-values.validator';
 import { CanComponentDeactivate } from '../../shared/guards/leave-page.guard';
 import { AuthService } from '../services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadButtonComponent } from '../../shared/load-button/load-button.component';
+import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'register',
-    imports: [ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive],
+    imports: [ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, LoadButtonComponent],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })
@@ -23,6 +26,8 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
   #saved = false;
   #authService = inject(AuthService);
   #destroyRef = inject(DestroyRef);
+  loading = signal(false);
+  #modalService = inject(NgbModal);
 
   registerForm = this.#fb.group(
     {
@@ -50,14 +55,14 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
         lat: this.coords.latitude.toString(),
         lng: this.coords.longitude.toString()
       });
-      console.log(pos);
-      console.log(this.coords);
     } catch (error) {
       console.error(error, "Geolocalization is unavailable");
     }
   }
 
   registerUser() {
+    setTimeout(() => {
+      this.loading.set(true);
     this.#authService
       .register({
         ...this.registerForm.getRawValue(),
@@ -66,10 +71,26 @@ export class RegisterComponent implements OnInit, CanComponentDeactivate {
         lng: parseFloat(this.registerForm.getRawValue().lng),
       })
       .pipe(takeUntilDestroyed(this.#destroyRef))
-      .subscribe(() => {
-        this.#saved = true;
-        this.#router.navigate(['/auth/login']);
+      .subscribe({
+        next: () => {
+          this.#saved = true;
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'User Registered';
+          modalRefSuccess.componentInstance.body = 'Your user has been registered successfully!';
+          setTimeout(() => {
+            modalRefSuccess.close();
+            this.#router.navigate(['/auth/login']);
+          }, 1500);
+        },
+        error: (error) => {
+          console.error(error);
+          this.loading.set(false);
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Error';
+          modalRefSuccess.componentInstance.body = 'There was an error registering the user. Please try again.';
+        }
       });
+    }, 2500);
   }
 
   goBack() {

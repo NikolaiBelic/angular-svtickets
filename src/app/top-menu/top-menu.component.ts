@@ -8,15 +8,11 @@ import { AuthService } from '../auth/services/auth.service';
     templateUrl: './top-menu.component.html',
     styleUrls: ['./top-menu.component.css']
 })
-export class TopMenuComponent implements OnInit {
+export class TopMenuComponent {
   #authService = inject(AuthService);
   #router = inject(Router);
 
   isLogged = computed(() => this.#authService.logged());
-
-  ngOnInit() {
-      console.log('User is logged in:', this.isLogged());
-  }
 
   logout() {
     this.#authService.logout();

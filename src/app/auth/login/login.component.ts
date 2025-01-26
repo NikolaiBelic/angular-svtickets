@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, DestroyRef, signal } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ValidationClassesDirective } from '../../shared/directives/validation-classes.directive';
@@ -12,11 +12,13 @@ import { GoogleLoginDirective } from '../google-login/google-login.directive';
 import { FbLoginDirective } from '../facebook-login/fb-login.directive';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { LoadButtonComponent } from '../../shared/load-button/load-button.component';
+import { load } from 'ol/Image';
 
 @Component({
   selector: 'login',
   imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective,
-    FbLoginDirective, FontAwesomeModule],
+    FbLoginDirective, FontAwesomeModule, LoadButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -28,6 +30,7 @@ export class LoginComponent implements OnInit {
   #destroyRef = inject(DestroyRef);
   #router = inject(Router);
   #modalService = inject(NgbModal);
+  loading = signal<boolean>(false);
 
   loginForm = this.#fb.group(
     {
@@ -41,14 +44,14 @@ export class LoginComponent implements OnInit {
       const pos = await MyGeolocation.getLocation();
       this.coords.latitude = pos.latitude;
       this.coords.longitude = pos.longitude;
-      console.log(pos);
-      console.log(this.coords);
     } catch (error) {
       console.error(error, "Geolocalization is unavailable");
     }
   }
 
   loginUser() {
+    setTimeout(() => {
+      this.loading.set(true);
     this.#authService
       .login({
         ...this.loginForm.getRawValue(),
@@ -68,6 +71,7 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error(error);
+          this.loading.set(false);
           const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
           modalRefSuccess.componentInstance.title = 'Login Error';
           modalRefSuccess.componentInstance.body = 'Incorrect email or password, try again';
@@ -76,11 +80,10 @@ export class LoginComponent implements OnInit {
           }, 1500);
         }
       });
+    }, 2500);
   }
 
   loggedGoogle(resp: google.accounts.id.CredentialResponse) {
-    // Envia esto tu API
-    console.log(resp.credential);
     this.#authService
       .loginGoogle(resp.credential)
       .pipe(takeUntilDestroyed(this.#destroyRef))
@@ -107,8 +110,6 @@ export class LoginComponent implements OnInit {
   }
 
   loggedFacebook(resp: fb.StatusResponse) {
-    // Envía esto a tu API
-    console.log(resp.authResponse.accessToken);
     this.#authService
       .loginFacebook(resp.authResponse.accessToken!)
       .pipe(takeUntilDestroyed(this.#destroyRef))

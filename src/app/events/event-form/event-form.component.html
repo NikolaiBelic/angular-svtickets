@@ -121,9 +121,11 @@
       <div id="map" class="mb-3"></div> -->
       <div>
         @if (isEditMode()) {
-        <button type="submit" class="btn btn-primary">Update</button>
+        <!-- <button type="submit" class="btn btn-primary">Update</button> -->
+        <load-button [disabled]="loading()" [loading]="loading()" (click)="loading.set(!loading())">Update</load-button>
         } @else {
-        <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid">Create</button>
+        <!-- <button type="submit" class="btn btn-primary" [disabled]="eventForm.invalid"></button> -->
+        <load-button [disabled]="eventForm.invalid || loading()" [loading]="loading()" (click)="loading.set(!loading())">Create</load-button>
         }
       </div>
     </form>
