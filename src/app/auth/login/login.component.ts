@@ -8,7 +8,6 @@ import { AuthService } from '../services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SuccessModalComponent } from '../../shared/modals/success-modal/success-modal.component';
-import { ErrorModalComponent } from '../../shared/modals/error-modal/error-modal.component';
 import { GoogleLoginDirective } from '../google-login/google-login.directive';
 import { FbLoginDirective } from '../facebook-login/fb-login.directive';
 import { faFacebook } from '@fortawesome/free-brands-svg-icons';
@@ -16,7 +15,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'login',
-  standalone: true,
   imports: [RouterLink, ReactiveFormsModule, ValidationClassesDirective, GoogleLoginDirective,
     FbLoginDirective, FontAwesomeModule],
   templateUrl: './login.component.html',
@@ -61,6 +59,8 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: () => {
           const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Correct';
+          modalRefSuccess.componentInstance.body = 'You are logged in';
           setTimeout(() => {
             modalRefSuccess.close();
             this.#router.navigate(['/events']);
@@ -68,9 +68,11 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error(error);
-          const modalRefError = this.#modalService.open(ErrorModalComponent);
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Error';
+          modalRefSuccess.componentInstance.body = 'Incorrect email or password, try again';
           setTimeout(() => {
-            modalRefError.close();
+            modalRefSuccess.close();
           }, 1500);
         }
       });
@@ -85,6 +87,8 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: () => {
           const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Correct';
+          modalRefSuccess.componentInstance.body = 'You are logged in';
           setTimeout(() => {
             modalRefSuccess.close();
             this.#router.navigate(['/events']);
@@ -92,9 +96,11 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error(error);
-          const modalRefError = this.#modalService.open(ErrorModalComponent);
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Error';
+          modalRefSuccess.componentInstance.body = 'Try again';
           setTimeout(() => {
-            modalRefError.close();
+            modalRefSuccess.close();
           }, 1500);
         }
       });
@@ -109,6 +115,8 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: () => {
           const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Correct';
+          modalRefSuccess.componentInstance.body = 'You are logged in';
           setTimeout(() => {
             modalRefSuccess.close();
             this.#router.navigate(['/events']);
@@ -116,9 +124,11 @@ export class LoginComponent implements OnInit {
         },
         error: (error) => {
           console.error(error);
-          const modalRefError = this.#modalService.open(ErrorModalComponent);
+          const modalRefSuccess = this.#modalService.open(SuccessModalComponent);
+          modalRefSuccess.componentInstance.title = 'Login Error';
+          modalRefSuccess.componentInstance.body = 'Try again';
           setTimeout(() => {
-            modalRefError.close();
+            modalRefSuccess.close();
           }, 1500);
         }
       });

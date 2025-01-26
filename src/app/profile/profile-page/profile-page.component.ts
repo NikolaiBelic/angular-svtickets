@@ -13,11 +13,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-	selector: 'profile-page',
-	standalone: true,
-	imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink, FontAwesomeModule],
-	templateUrl: './profile-page.component.html',
-	styleUrl: './profile-page.component.css'
+    selector: 'profile-page',
+    imports: [OlMapDirective, OlMarkerDirective, ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive, RouterLink, FontAwesomeModule],
+    templateUrl: './profile-page.component.html',
+    styleUrl: './profile-page.component.css'
 })
 export class ProfilePageComponent {
 	#title = inject(Title);

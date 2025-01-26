@@ -4,7 +4,6 @@ import { AuthService } from '../auth/services/auth.service';
 
 @Component({
     selector: 'top-menu',
-    standalone: true,
     imports: [RouterLink, RouterLinkActive],
     templateUrl: './top-menu.component.html',
     styleUrls: ['./top-menu.component.css']

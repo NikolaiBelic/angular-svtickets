@@ -14,7 +14,8 @@ export const profileRoutes: Routes = [
         resolve: {
             user: profileResolver,
         },
-        canActivate: [loginActivateGuard]
+        canActivate: [loginActivateGuard],
+        data: { animation: 'profilePage' }
     },
     {
         path: ':id',
@@ -27,6 +28,7 @@ export const profileRoutes: Routes = [
             user: profileResolver,
         },
         canActivate: [numericIdGuard, loginActivateGuard],
+        data: { animation: 'profilePage' }
     },
     {
       path: '',

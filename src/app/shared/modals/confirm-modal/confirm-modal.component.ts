@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  selector: 'confirm-modal',
-  standalone: true,
-  imports: [],
+  selector: 'app-confirm-modal',
   templateUrl: './confirm-modal.component.html',
-  styleUrl: './confirm-modal.component.css'
+  styleUrls: ['./confirm-modal.component.css']
 })
 export class ConfirmModalComponent {
+  title: string = '';
+  body: string = '';
 
+  activeModal = inject(NgbActiveModal);
 }

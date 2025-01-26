@@ -1,8 +1,10 @@
 <div class="modal-header">
-    <h4 class="modal-title">Login Exitoso</h4>
-</div>
-<div class="modal-body">
-    <p>¡El login ha sido correcto!</p>
-</div>
-<div class="modal-footer">
-</div>
+    <h4 class="modal-title">{{title}}</h4>
+    <button type="button" class="btn-close" aria-label="Close"
+      (click)="activeModal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p>{{body}}</p>
+  </div>
+  <div class="modal-footer">
+  </div>

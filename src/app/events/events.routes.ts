@@ -12,7 +12,8 @@ export const eventsRoutes: Routes = [
         (m) => m.EventsPageComponent
       ),
     title: 'Events Page | Angular Events',
-    canActivate: [loginActivateGuard]
+    canActivate: [loginActivateGuard],
+    data: { animation: 'eventsPage' },
   },
   {
     path: 'add',
@@ -22,7 +23,8 @@ export const eventsRoutes: Routes = [
       ),
     title: 'New Event | Angular Events',
     canDeactivate: [leavePageGuard],
-    canActivate: [loginActivateGuard]
+    canActivate: [loginActivateGuard],
+    data: { animation: 'eventForm' },
   },
   {
     path: ':id/edit',
@@ -35,7 +37,8 @@ export const eventsRoutes: Routes = [
       event: eventResolver,
     },
     canDeactivate: [leavePageGuard],
-    canActivate: [loginActivateGuard]
+    canActivate: [loginActivateGuard],
+    data: { animation: 'eventForm' },
   },
   {
     path: ':id',
@@ -47,6 +50,6 @@ export const eventsRoutes: Routes = [
       event: eventResolver,
     },
     canActivate: [numericIdGuard, loginActivateGuard],
-    
+    data: { animation: 'eventDetail' }
   },
 ];

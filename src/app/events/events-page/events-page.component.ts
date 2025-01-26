@@ -9,11 +9,10 @@ import { debounceTime, map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'events-page',
-  standalone: true,
-  imports: [ReactiveFormsModule, EventCardComponent],
-  templateUrl: './events-page.component.html',
-  styleUrl: './events-page.component.css'
+    selector: 'events-page',
+    imports: [ReactiveFormsModule, EventCardComponent],
+    templateUrl: './events-page.component.html',
+    styleUrl: './events-page.component.css'
 })
 
 export class EventsPageComponent {

@@ -16,7 +16,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'event-detail',
-    standalone: true,
     imports: [OlMapDirective, OlMarkerDirective, EventCardComponent, RouterLink, ReactiveFormsModule, DatePipe],
     templateUrl: './event-detail.component.html',
     styleUrl: './event-detail.component.css'

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal, input, effect } from '@angular/core';
+import { Component, DestroyRef, inject, signal, input, effect, ViewChild } from '@angular/core';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { EncodeBase64Directive } from '../../shared/directives/encode-base64.directive';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -14,17 +14,21 @@ import { GaAutocompleteDirective } from '../../shared/directives/ol-maps/ga-auto
 import { SearchResult } from '../../shared/interfaces/search-result';
 import { MyEvent } from '../interfaces/MyEvent';
 import { Title } from '@angular/platform-browser';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmModalComponent } from '../../shared/modals/confirm-modal/confirm-modal.component';
+import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'event-form',
-  standalone: true,
-  imports: [ReactiveFormsModule, EncodeBase64Directive, ValidationClassesDirective,
-    DatePipe, GaAutocompleteDirective, OlMapDirective, OlMarkerDirective],
-  templateUrl: './event-form.component.html',
-  styleUrl: './event-form.component.css'
+    selector: 'event-form',
+    imports: [ReactiveFormsModule, EncodeBase64Directive, ValidationClassesDirective,
+        DatePipe, GaAutocompleteDirective, OlMapDirective, OlMarkerDirective],
+    templateUrl: './event-form.component.html',
+    styleUrl: './event-form.component.css'
 })
 
 export class EventFormComponent implements CanComponentDeactivate {
+  @ViewChild('addForm', { static: true }) addForm!: NgForm;
+
   constructor() {
     effect(() => {
       this.editMode();
@@ -53,6 +57,7 @@ export class EventFormComponent implements CanComponentDeactivate {
   address = signal<string>('');
   event = input.required<MyEvent>();
   isEditMode = signal<boolean>(false);
+  #modalService = inject(NgbModal);
 
   eventForm = this.#fb.group({
     title: ['', [Validators.required, Validators.minLength(5), Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
@@ -85,11 +90,13 @@ export class EventFormComponent implements CanComponentDeactivate {
   }
 
   canDeactivate() {
-    return (
-      this.eventForm.pristine ||
-      this.#saved ||
-      confirm('¿Quieres abandonar la página?. Los cambios se perderán...')
-    );
+    if (this.#saved || (this.addForm && this.addForm.pristine)) {
+      return true;
+    }
+    const modalRef = this.#modalService.open(ConfirmModalComponent);
+    modalRef.componentInstance.title = 'Changes not saved';
+    modalRef.componentInstance.body = 'Do you want to leave the page?';
+    return modalRef.result.catch(() => false);
   }
 
   addEvent() {

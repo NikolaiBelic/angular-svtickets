@@ -12,7 +12,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'register',
-    standalone: true,
     imports: [ReactiveFormsModule, ValidationClassesDirective, EncodeBase64Directive],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
